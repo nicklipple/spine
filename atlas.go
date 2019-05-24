@@ -3,9 +3,18 @@ package spine
 import (
 	"bufio"
 	"errors"
+	"image"
 	"io"
+	"log"
+	"os"
+	"path"
 	"strconv"
 	"strings"
+
+	"github.com/faiface/pixel"
+
+	//support PNG files
+	_ "image/png"
 )
 
 type Atlas struct {
@@ -32,7 +41,7 @@ func NewAtlas(r io.Reader, loader TextureLoader) (*Atlas, error) {
 		if page == nil {
 			var tuple []string
 			var terr error
-
+			scanner.Scan()
 			formatName, err := readValue("format", scanner)
 			if err != nil {
 				return nil, errors.New("spine: failed to parse format: " + err.Error())
@@ -385,7 +394,40 @@ type AtlasRegion struct {
 	Pads                          [4]int
 }
 
+type AtlasTextureLoader struct {
+	Prefix string
+}
+
+func (a *AtlasTextureLoader) Load(page *AtlasPage) error {
+	path := path.Join(a.Prefix, page.Name)
+	pic, err := loadPicture(path)
+	if err != nil {
+		return err
+	}
+
+	page.RendererObject = pic
+	return nil
+}
+
+func (a *AtlasTextureLoader) Unload(page *AtlasPage) error {
+	log.Println("not implemented")
+	return nil
+}
+
 type TextureLoader interface {
 	Load(page *AtlasPage) error
 	Unload(page *AtlasPage) error
+}
+
+func loadPicture(path string) (pixel.Picture, error) {
+	file, err := os.Open(path)
+	if err != nil {
+		return nil, err
+	}
+	defer file.Close()
+	img, _, err := image.Decode(file)
+	if err != nil {
+		return nil, err
+	}
+	return pixel.PictureDataFromImage(img), nil
 }

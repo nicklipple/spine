@@ -2,6 +2,8 @@ package spine
 
 import (
 	"math"
+
+	"github.com/faiface/pixel"
 )
 
 type Attachment interface {
@@ -28,6 +30,10 @@ type RegionAttachment struct {
 
 	Uvs    [8]float32
 	offset [8]float32
+}
+
+func (a RegionAttachment) Rect() pixel.Rect {
+	return pixel.R(float64(a.X), float64(a.Y), float64(a.X+a.RegionWidth), float64(a.Y+a.RegionHeight))
 }
 
 func (a RegionAttachment) Name() string {
