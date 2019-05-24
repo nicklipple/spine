@@ -394,6 +394,10 @@ type AtlasRegion struct {
 	Pads                          [4]int
 }
 
+func (a AtlasRegion) Rect() pixel.Rect {
+	return pixel.R(float64(a.X), float64(a.Y), float64(a.X+a.Width), float64(a.Y+a.Height))
+}
+
 type AtlasTextureLoader struct {
 	Prefix string
 }
