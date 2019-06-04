@@ -57,7 +57,7 @@ func NewBone(boneData *BoneData, parent *Bone) *Bone {
 	bone.ScaleY = 1
 	bone.WorldScaleX = 1
 	bone.WorldScaleY = 1
-	bone.Transform = boneData.transformg
+	bone.Transform = boneData.transform
 	bone.SetToSetupPose()
 	return bone
 }
