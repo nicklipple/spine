@@ -78,8 +78,8 @@ func NewSkeleton(skeletonData *SkeletonData) *Skeleton {
 	skeleton.Bones = make([]*Bone, 0)
 	for _, boneData := range skeletonData.bones {
 		var parent *Bone
-		if boneData.parent != nil {
-			i, _ := skeletonData.findBone(boneData.parent.name)
+		if boneData.Parent != nil {
+			i, _ := skeletonData.findBone(boneData.Parent.name)
 			parent = skeleton.Bones[i]
 		}
 		skeleton.Bones = append(skeleton.Bones, NewBone(boneData, parent))

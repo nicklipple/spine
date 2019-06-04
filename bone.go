@@ -7,20 +7,21 @@ import (
 var BoneYDown = false
 
 type BoneData struct {
-	name     string
-	parent   *BoneData
-	Length   float32
-	x        float32
-	y        float32
-	rotation float32
-	scaleX   float32
-	scaleY   float32
+	name      string
+	Parent    *BoneData
+	Length    float32
+	x         float32
+	y         float32
+	rotation  float32
+	scaleX    float32
+	scaleY    float32
+	transform string
 }
 
 func NewBoneData(name string, parent *BoneData) *BoneData {
 	boneData := new(BoneData)
 	boneData.name = name
-	boneData.parent = parent
+	boneData.Parent = parent
 	boneData.scaleX = 1
 	boneData.scaleY = 1
 	return boneData
@@ -29,7 +30,7 @@ func NewBoneData(name string, parent *BoneData) *BoneData {
 type Bone struct {
 	name          string
 	Data          *BoneData
-	parent        *Bone
+	Parent        *Bone
 	X             float32
 	Y             float32
 	Rotation      float32
@@ -44,17 +45,19 @@ type Bone struct {
 	WorldRotation float32
 	WorldScaleX   float32
 	WorldScaleY   float32
+	Transform     string
 }
 
 func NewBone(boneData *BoneData, parent *Bone) *Bone {
 	bone := new(Bone)
 	bone.name = boneData.name
 	bone.Data = boneData
-	bone.parent = parent
+	bone.Parent = parent
 	bone.ScaleX = 1
 	bone.ScaleY = 1
 	bone.WorldScaleX = 1
 	bone.WorldScaleY = 1
+	bone.Transform = boneData.transformg
 	bone.SetToSetupPose()
 	return bone
 }
@@ -69,13 +72,17 @@ func (b *Bone) SetToSetupPose() {
 }
 
 func (b *Bone) UpdateWorldTransform(flipX, flipY bool) {
-	parent := b.parent
+	parent := b.Parent
 	if parent != nil {
 		b.WorldX = b.X*parent.M00 + b.Y*parent.M01 + parent.WorldX
 		b.WorldY = b.X*parent.M10 + b.Y*parent.M11 + parent.WorldY
 		b.WorldScaleX = parent.WorldScaleX * b.ScaleX
 		b.WorldScaleY = parent.WorldScaleY * b.ScaleY
-		b.WorldRotation = parent.WorldRotation + b.Rotation
+		if b.Transform == "noRotationOrReflection" {
+			b.WorldRotation = b.Rotation
+		} else {
+			b.WorldRotation = parent.WorldRotation + b.Rotation
+		}
 	} else {
 		b.WorldX = b.X
 		b.WorldY = b.Y
