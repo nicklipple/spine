@@ -1,5 +1,11 @@
 package spine
 
+import (
+	"math"
+
+	"github.com/faiface/pixel"
+)
+
 type SkeletonData struct {
 	bones       []*BoneData
 	slots       []*SlotData
@@ -203,4 +209,20 @@ func (s *Skeleton) FindAnimation(name string) *Animation {
 
 func (s *Skeleton) Update(dt float32) {
 	s.time += dt
+}
+
+func (s *Skeleton) Draw(t pixel.Target) {
+	for _, slot := range s.DrawOrder {
+		if at, ok := slot.Attachment.(*RegionAttachment); ok {
+			at.Update(slot)
+			ar := at.RendererObject.(*AtlasRegion)
+			sPos := pixel.V(float64(slot.Bone.WorldX), float64(slot.Bone.WorldY)).Add(pixel.V(float64(at.X), float64(at.Y)).Rotated(-(float64(at.Rotation) * (math.Pi / 180))))
+			boneRots := float64(slot.Bone.WorldRotation) + float64(at.Rotation)
+			if ar.Rotate {
+				boneRots -= 90
+			}
+			mat := pixel.IM.Rotated(pixel.ZV, (boneRots * (math.Pi / 180))).Moved(sPos)
+			ar.Sprite.Draw(t, mat)
+		}
+	}
 }

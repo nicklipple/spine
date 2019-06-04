@@ -222,6 +222,8 @@ func NewAtlas(r io.Reader, loader TextureLoader) (*Atlas, error) {
 			}
 			region.Index = regIdx
 
+			region.Sprite = pixel.NewSprite(page.RendererObject, region.Rect())
+
 			atlas.Regions = append(atlas.Regions, region)
 		}
 	}
@@ -392,6 +394,7 @@ type AtlasRegion struct {
 	Rotate                        bool
 	Splits                        [4]int
 	Pads                          [4]int
+	Sprite                        *pixel.Sprite
 }
 
 func (a AtlasRegion) Rect() pixel.Rect {
