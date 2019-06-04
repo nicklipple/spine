@@ -377,7 +377,7 @@ type AtlasPage struct {
 	MagFilter      TextureFilter
 	UWrap          TextureWrap
 	VWrap          TextureWrap
-	RendererObject interface{}
+	RendererObject pixel.Picture
 	Width, Height  int
 }
 
@@ -395,7 +395,9 @@ type AtlasRegion struct {
 }
 
 func (a AtlasRegion) Rect() pixel.Rect {
-	return pixel.R(float64(a.X), float64(a.Y), float64(a.X+a.Width), float64(a.Y+a.Height))
+	pic := a.Page.RendererObject
+	minY := pic.Bounds().H() - float64(a.Y+a.Height)
+	return pixel.R(float64(a.X), minY, float64(a.X+a.Width), minY+float64(a.Height))
 }
 
 type AtlasTextureLoader struct {

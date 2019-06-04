@@ -24,12 +24,13 @@ type fileBone struct {
 	Name   string `json:"name"`
 	Parent string `json:"parent"`
 
-	Length   interface{} `json:"length"`
-	Rotation interface{} `json:"rotation"`
-	X        interface{} `json:"x"`
-	Y        interface{} `json:"y"`
-	ScaleX   interface{} `json:"scaleX"`
-	ScaleY   interface{} `json:"scaleY"`
+	Length    interface{} `json:"length"`
+	Rotation  interface{} `json:"rotation"`
+	X         interface{} `json:"x"`
+	Y         interface{} `json:"y"`
+	ScaleX    interface{} `json:"scaleX"`
+	ScaleY    interface{} `json:"scaleY"`
+	Transform string      `json:"transform"`
 }
 
 type fileAttachment struct {
@@ -127,6 +128,8 @@ func New(r io.Reader, scale float32, loader AttachmentLoader) (*SkeletonData, er
 		if scaleY, ok := bone.ScaleY.(float64); ok {
 			boneData.scaleY = float32(scaleY)
 		}
+
+		boneData.transform = bone.Transform
 
 		skeletonData.bones = append(skeletonData.bones, boneData)
 	}
